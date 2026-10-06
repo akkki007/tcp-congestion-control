@@ -4,7 +4,7 @@ Application-aware, **mid-flow** switching of TCP congestion control algorithms
 (CUBIC / BBR / Reno / Vegas) per socket, using socket-level telemetry, an ML
 classifier and a stability guard. No kernel patch, no application changes.
 
-Full design: [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md)
+Full design: [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) · Beginner-friendly walkthrough: [`docs/EXPLAINED.md`](docs/EXPLAINED.md)
 
 ## Architecture (Figure 1)
 
