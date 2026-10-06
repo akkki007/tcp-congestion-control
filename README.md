@@ -24,6 +24,7 @@ Full design: [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md)
 | P2 | Telemetry sample + 14-feature sliding-window extractor (ref. 103) | ✅ done, unit-tested |
 | P3 | LD_PRELOAD C shim: socket hooks, TCP_INFO telemetry, setsockopt actuator (ref. 106/107) | ✅ working |
 | P4 | Controller daemon (registry, decision loop, actuation) | ✅ working (rule-based policy as placeholder) |
+| UI | Live dashboard (Next.js + SSE backend) | ✅ working |
 | P5 | Training data generation + Random Forest classifier (ref. 104) | ⏳ next |
 | P6 | eBPF telemetry collector (ref. 102) | ⏳ planned |
 | P7 | Benchmarks: static CC vs. ACCC (goodput, tail latency) | ⏳ planned |
@@ -59,6 +60,26 @@ connection survived intact  : True
 
 Vegas is used for the interactive class when the kernel provides it
 (`tcp_vegas` module); the dev machine only has `reno bbr cubic`.
+
+## Live dashboard
+
+A Next.js dashboard (UI components and design tokens taken from
+[magpie](https://github.com/akkki007/magpie)) streams the controller's
+decisions live: throughput coloured by the active algorithm, application-phase
+bands, switch markers, classifier probabilities, stability-guard state, the
+switch log and the 14-feature vector.
+
+![ACCC live dashboard](docs/images/dashboard.png)
+
+```bash
+make shim
+python3 -m demo.server            # terminal 1: backend on :8765 (SSE)
+cd dashboard && bun install && bun run dev   # terminal 2: UI on http://localhost:3000
+```
+
+Press **Run demo**. The backend (`demo/server.py`, stdlib asyncio) launches the
+scenario and streams events over Server-Sent Events; Next.js proxies `/api/*`
+to it, so the browser talks to one origin.
 
 ## Tests
 

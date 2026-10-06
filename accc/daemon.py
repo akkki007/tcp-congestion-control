@@ -55,6 +55,7 @@ class Controller:
         self.guard = guard
         self.window = window
         self.flows: dict[tuple[int, int], Flow] = {}
+        self.total_switches = 0
         self.on_event = on_event or (lambda e: None)
 
     def _emit(self, **e) -> None:
@@ -98,6 +99,7 @@ class Controller:
                 flow.cc, flow.pending = msg["cc"], None
                 flow.last_switch_ts = time.monotonic()
                 flow.switches += 1
+                self.total_switches += 1
             elif flow:
                 flow.pending = None
             self._emit(event="ack", pid=key[0], fd=key[1], cc=msg.get("cc"), ok=msg.get("ok"))
