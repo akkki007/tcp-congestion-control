@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+shim/*.so
+shim/*.o
+models/*.joblib
+data/
+results/
+.pytest_cache/
