@@ -36,6 +36,9 @@
 #define MAX_FDS 65536
 #define LINE_MAX_LEN 1024
 #define RECONNECT_S 1.0
+#ifndef TCP_CA_NAME_MAX
+#define TCP_CA_NAME_MAX 16
+#endif
 
 enum fd_state { FD_NONE = 0, FD_TCP = 1, FD_REGISTERED = 2 };
 
