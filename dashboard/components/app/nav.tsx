@@ -1,18 +1,12 @@
-import { Activity, BookOpen, Brain, Network, Settings2 } from "lucide-react";
+import { Activity, BookOpen, Gauge, Spline, TrendingUpDown } from "lucide-react";
 
-/**
- * The sections, once, for both navigations.
- *
- * `href` marks a section that actually exists. The rest are planned phases and are inert on
- * purpose — a nav item that looks live and does nothing is worse than one that is visibly
- * not built yet.
- */
+/** The sections, once, for both navigations: the live dashboard, then one page per algorithm. */
 export const SECTIONS = [
-  { icon: Activity, label: "Live", href: "/" },
-  { icon: Network, label: "Flows" },
-  { icon: Brain, label: "Model" },
-  { icon: Settings2, label: "Guard" },
-  { icon: BookOpen, label: "Docs" },
-] as const satisfies readonly { icon: typeof Activity; label: string; href?: string }[];
+  { icon: Activity, label: "Live", href: "/live" },
+  { icon: Spline, label: "CUBIC", href: "/algorithm/cubic", cc: "cubic" },
+  { icon: Gauge, label: "BBR", href: "/algorithm/bbr", cc: "bbr" },
+  { icon: TrendingUpDown, label: "RENO", href: "/algorithm/reno", cc: "reno" },
+  { icon: BookOpen, label: "Docs", href: "/docs" },
+] as const satisfies readonly { icon: typeof Activity; label: string; href: string; cc?: string }[];
 
 export type SectionLabel = (typeof SECTIONS)[number]["label"];

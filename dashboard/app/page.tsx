@@ -1,10 +1,5 @@
-import { AppShell } from "@/components/app/shell";
-import { Dashboard } from "@/components/accc/dashboard";
+import { Landing } from "@/components/landing/landing";
 
 export default function Page() {
-  return (
-    <AppShell active="Live">
-      <Dashboard />
-    </AppShell>
-  );
+  return <Landing />;
 }

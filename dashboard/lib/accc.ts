@@ -19,6 +19,8 @@ export const FEATURE_NAMES = [
 export type FeatureName = (typeof FEATURE_NAMES)[number];
 
 export type Config = {
+  /** "live" = real socket through the LD_PRELOAD shim (Linux); "simulated" = modelled socket, real controller. */
+  mode?: "live" | "simulated";
   available: string[];
   interactive_cc: string;
   margin: number;

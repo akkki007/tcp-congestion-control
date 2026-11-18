@@ -99,6 +99,12 @@
 
   /* Motion */
   --ease-out-quint: cubic-bezier(0.2, 0, 0, 1);
+  /* A dash travelling along a graph edge (from kaizen's graph map). */
+  --animate-map-pulse: map-pulse 1.4s linear infinite;
+  @keyframes map-pulse {
+    from { stroke-dashoffset: 24; }
+    to { stroke-dashoffset: -96; }
+  }
 
   /* ── Learning surface ──────────────────────────────────────────────────
      A second, deliberately separate visual language for /learning: warm

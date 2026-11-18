@@ -1,6 +1,7 @@
 """Dashboard backend: runs demo scenarios and streams events over SSE.
 
     python -m demo.server            # http://127.0.0.1:8765
+    python -m demo.server --sim      # force the simulated socket/kernel (any OS)
 
 Endpoints (stdlib asyncio only, no web framework):
     GET  /api/status   kernel CC list, guard config, whether a run is active
@@ -14,6 +15,7 @@ import argparse
 import asyncio
 import json
 import logging
+import os
 
 from demo.runner import run_scenario, scenario_config
 
@@ -108,11 +110,14 @@ async def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8765)
+    ap.add_argument("--sim", action="store_true", help="force the simulated scenario (no shim needed)")
     args = ap.parse_args()
+    if args.sim:
+        os.environ["ACCC_MODE"] = "simulated"
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(message)s")
     hub = Hub()
     server = await asyncio.start_server(lambda r, w: handle(hub, r, w), args.host, args.port)
-    log.info("dashboard backend on http://%s:%d", args.host, args.port)
+    log.info("dashboard backend on http://%s:%d (%s mode)", args.host, args.port, scenario_config()["mode"])
     async with server:
         await server.serve_forever()
 

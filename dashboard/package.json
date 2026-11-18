@@ -6,7 +6,10 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev:bun": "bun --bun node_modules/next/dist/bin/next dev -p 3000",
+    "build:bun": "bun --bun node_modules/next/dist/bin/next build",
+    "typecheck:bun": "bun --bun node_modules/typescript/bin/tsc --noEmit"
   },
   "dependencies": {
     "lucide-react": "^1.35.0",

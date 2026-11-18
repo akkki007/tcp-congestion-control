@@ -77,9 +77,57 @@ python3 -m demo.server            # terminal 1: backend on :8765 (SSE)
 cd dashboard && bun install && bun run dev   # terminal 2: UI on http://localhost:3000
 ```
 
+### Pages
+
+| Route | What it is |
+|-------|------------|
+| `/` | Landing page for presenting: problem, idea, high-level architecture, result, status |
+| `/live` | Live run: TCP path graph, KPIs, throughput timeline — press **Run demo** |
+| `/algorithm/cubic` · `/bbr` · `/reno` | "Feel the delay": type while a background download runs and see how long each keystroke waits in that algorithm's queue (in-browser model) |
+| `/docs` | Everything on one page: talking points, architecture, components, protocol, demo, how to run, claim mapping, glossary |
+
+### TCP path graph
+
+The top card draws the connection as a graph (the tile-and-connector style of
+[kaizen](https://github.com/akkki007/kaizen)'s graph map): sender computer
+(app process with `libaccc.so`, kernel TCP socket, NIC) → bottleneck link with
+its queue → receiver computer (NIC, TCP socket, sink), with the ACCC controller
+(features → classifier → guard) above the sender. While a run is live it
+animates the traffic:
+
+- **data segments** sender → receiver, coloured by the algorithm that sent them,
+  so the colour visibly changes mid-flow after a switch; rate follows throughput;
+- **ACKs** back from the receiver (one per two segments);
+- **TCP_INFO telemetry** from the kernel through the shim up to the controller;
+- the **setsockopt(TCP_CONGESTION)** command back down, with a pulse on the edge;
+- segments **dropped** at the bottleneck when the retransmit ratio rises.
+
+Click any node for a plain-language explanation with its live numbers.
+
 Press **Run demo**. The backend (`demo/server.py`, stdlib asyncio) launches the
 scenario and streams events over Server-Sent Events; Next.js proxies `/api/*`
 to it, so the browser talks to one origin.
+
+## Running on Windows / macOS (simulated mode)
+
+The live path needs Linux (LD_PRELOAD + `TCP_CONGESTION`). On any other OS — or
+with `python -m demo.server --sim` / `ACCC_MODE=simulated` — the backend runs a
+**simulated socket and kernel** (100 Mb/s bottleneck, 20 ms RTT, per-algorithm
+throughput/queue/loss) but feeds the samples into the **real** controller,
+feature extractor, policy and stability guard. The dashboard shows a
+"Simulated path · real controller" badge in that mode.
+
+```powershell
+python -m pip install -e ".[dev]"
+python -m pytest -q                         # unit tests
+python -m demo.live_switch                  # terminal demo (simulated off Linux)
+
+python -m demo.server                       # terminal 1: backend on :8765
+cd dashboard; bun install; bun run dev:bun  # terminal 2: UI on http://localhost:3000
+```
+
+`dev:bun` / `build:bun` / `typecheck:bun` run Next and tsc on Bun's runtime, so
+Node.js is not required. With Node installed, the plain `dev` / `build` scripts work too.
 
 ## Tests
 

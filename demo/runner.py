@@ -20,9 +20,21 @@ from typing import Callable
 from accc.daemon import Controller, available_algorithms, serve
 from accc.guard import StabilityGuard
 from accc.policy import HeuristicPolicy
+from demo.simulate import SIM_ALGORITHMS, run_simulation
 
 ROOT = Path(__file__).resolve().parent.parent
 SHIM = ROOT / "shim" / "libaccc.so"
+
+
+def scenario_mode() -> str:
+    """``live`` drives a real socket through the shim; ``simulated`` models the socket and kernel.
+
+    Live mode needs Linux and a built shim. ``ACCC_MODE=live|simulated`` overrides the choice.
+    """
+    forced = os.environ.get("ACCC_MODE")
+    if forced in ("live", "simulated"):
+        return forced
+    return "live" if sys.platform.startswith("linux") and SHIM.exists() else "simulated"
 
 
 def _sink(srv: socket.socket, result: dict) -> None:
@@ -36,8 +48,10 @@ def _sink(srv: socket.socket, result: dict) -> None:
 
 
 def scenario_config(margin: float = 0.15, dwell_s: float = 0.2) -> dict:
-    avail = available_algorithms()
+    mode = scenario_mode()
+    avail = available_algorithms() if mode == "live" else set(SIM_ALGORITHMS)
     return {
+        "mode": mode,
         "available": sorted(avail),
         "interactive_cc": "vegas" if "vegas" in avail else "reno",
         "margin": margin,
@@ -49,9 +63,11 @@ def scenario_config(margin: float = 0.15, dwell_s: float = 0.2) -> dict:
 
 async def run_scenario(on_event: Callable[[dict], None], margin: float = 0.15,
                        dwell_s: float = 0.2) -> dict:
+    cfg = scenario_config(margin, dwell_s)
+    if cfg["mode"] == "simulated":
+        return await run_simulation(on_event, cfg, margin, dwell_s)
     if not SHIM.exists():
         raise FileNotFoundError(f"{SHIM} missing; run `make shim`")
-    cfg = scenario_config(margin, dwell_s)
     avail = set(cfg["available"])
     t0 = time.monotonic()
 
