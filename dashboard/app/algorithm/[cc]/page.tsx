@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { AlgoPlayground } from "@/components/accc/algo-path";
+import { AlgoPlayground } from "@/components/accc/algo-playground";
 import { ALGORITHMS, type Algo } from "@/lib/algorithms";
 import { AppShell } from "@/components/app/shell";
 

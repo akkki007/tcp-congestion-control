@@ -6,10 +6,10 @@ import { ccColor } from "@/lib/accc";
 import { cn } from "@/lib/cn";
 
 /**
- * The 68px icon rail (from magpie): the live dashboard, then one entry per
+ * The 68px icon rail (from magpie): the core architecture, then one entry per
  * congestion-control algorithm, each marked with that algorithm's colour.
  */
-export function Rail({ active = "Live" }: { active?: SectionLabel }) {
+export function Rail({ active = "Core" }: { active?: SectionLabel }) {
   return (
     <nav aria-label="Sections" className="hidden w-[68px] shrink-0 flex-col items-center gap-1 py-4 sm:flex">
       <Link href="/" aria-label="ACCC home" className="mb-4">
@@ -22,7 +22,7 @@ export function Rail({ active = "Live" }: { active?: SectionLabel }) {
         const isActive = label === active;
         return (
           <div key={label} className="flex flex-col items-center">
-            {(i === 1 || label === "Docs") && <span className="my-2 h-px w-6 bg-line-strong" aria-hidden />}
+            {i === 1 && <span className="my-2 h-px w-6 bg-line-strong" aria-hidden />}
             <Link
               href={href}
               aria-label={label}
@@ -38,7 +38,7 @@ export function Rail({ active = "Live" }: { active?: SectionLabel }) {
                 <span aria-hidden className="absolute right-1 bottom-1 h-1.5 w-1.5 rounded-[2px]" style={{ background: ccColor(cc) }} />
               )}
             </Link>
-            {cc && <span className={cn("mt-0.5 mb-1 text-[9px] font-semibold tracking-[0.04em]", isActive ? "text-ink" : "text-ink-faint")}>{label}</span>}
+            <span className={cn("mt-0.5 mb-1 text-[9px] font-semibold tracking-[0.04em]", isActive ? "text-ink" : "text-ink-faint")}>{label}</span>
           </div>
         );
       })}
